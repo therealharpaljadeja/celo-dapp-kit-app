@@ -3,6 +3,7 @@
     "name": "celo-dapp-kit-app",
     "slug": "celo-dapp-kit-app",
     "version": "1.0.0",
+    "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
