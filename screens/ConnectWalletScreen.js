@@ -1,33 +1,23 @@
 import { View, Button, StyleSheet, Text } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
 	FeeCurrency,
 	requestAccountAddress,
 	requestTxSig,
 } from "@celo/dappkit";
-import HelloWorldContract from "../HelloWorld.json";
 import { newKitFromWeb3 } from "@celo/contractkit";
 import Web3 from "web3";
 import { toTxResult } from "@celo/connect";
 import * as Linking from "expo-linking";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { AccountContext } from "../context/AccountContext";
 
 const provider = "https://alfajores-forno.celo-testnet.org";
 const web3 = new Web3(provider);
 const kit = newKitFromWeb3(web3);
 
 export default function ConnectWalletScreen() {
-	const [account, setAccount] = useState(null);
-	const [contract, setContract] = useState(null);
-
-	useEffect(async () => {
-		const networkId = await web3.eth.net.getId();
-		const deployedNetwork = HelloWorldContract.networks[networkId];
-		const instance = new web3.eth.Contract(
-			HelloWorldContract.abi,
-			"0xD9BBC1c3C76bd285C33de5Df4b987369EC66DC56"
-		);
-		setContract(instance);
-	}, []);
+	const { setAccount } = useContext(AccountContext);
 
 	async function login() {
 		requestAccountAddress({
@@ -39,6 +29,7 @@ export default function ConnectWalletScreen() {
 		async function handler({ url }) {
 			const { path, queryParams } = Linking.parse(url);
 			if (path == "connect") {
+				console.log(queryParams.account);
 				setAccount(queryParams.account);
 				kit.defaultAccount = queryParams.account;
 			} else if (path == "send") {
@@ -78,16 +69,17 @@ export default function ConnectWalletScreen() {
 		// );
 	}
 
-	if (account) {
-		return (
-			<View>
-				<Text>{account}</Text>
-				<Button title='Send' onPress={send} />
-			</View>
-		);
-	} else {
-		<Button onPress={login} title='Connect Wallet' />;
-	}
+	// return (
+	// 	<View>
+	// 		<Text>{account}</Text>
+	// 		<Button title='Send' onPress={send} />
+	// 	</View>
+	// );
+	return (
+		<SafeAreaView>
+			<Button onPress={login} title='Connect Wallet' />
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({

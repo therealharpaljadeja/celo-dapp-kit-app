@@ -1,5 +1,5 @@
-import { Text } from "react-native";
+import Post from "../components/Post";
 
 export default function FeedScreen() {
-	return <Text>FeedScreen</Text>;
+	return <Post />;
 }
