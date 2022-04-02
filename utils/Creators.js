@@ -30,6 +30,17 @@ export const getCreatorAddressByUsername = async (wallet, username) => {
 	return result;
 };
 
+export const getCreatorAddressByAddress = async (kit) => {
+	const creatorsContract = new web3.eth.Contract(
+		Creators.abi,
+		CREATORS_CONTRACT_ADDRESS
+	);
+	let result = await creatorsContract.methods
+		.getCreatorAddressByAddress(kit.defaultAccount)
+		.call();
+	return result;
+};
+
 export const registerUser = async (kit, creatorObj) => {
 	const creatorsContract = new web3.eth.Contract(
 		Creators.abi,
@@ -102,8 +113,8 @@ export const getCreatorObjFromAddress = async (contractAddress) => {
 		.nftCollectionAddress()
 		.call();
 
-	let royaltyEarned = ethers.utils.formatEther(
-		(await provider.getBalance(nftCollectionAddress)).toString()
+	let royaltyEarned = web3.utils.fromWei(
+		(await web3.eth.getBalance(nftCollectionAddress)).toString()
 	);
 
 	return {

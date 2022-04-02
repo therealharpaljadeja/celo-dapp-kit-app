@@ -1,7 +1,8 @@
 const { registerRootComponent } = require("expo");
 const { default: App } = require("./App");
 const { default: AccountContextProvider } = require("./context/AccountContext");
-import { LogBox } from "react-native";
+const { LogBox } = require("react-native");
+const { default: CreatorContextProvider } = require("./context/CreatorContext");
 
 LogBox.ignoreLogs([
 	"The provided value 'ms-stream' ",
@@ -9,16 +10,12 @@ LogBox.ignoreLogs([
 	"Require cycle",
 ]);
 
-// LogBox.ignoreLogs([
-// 	"The provided value 'moz-chunked-arraybuffer' ...",
-// 	"The provided value 'ms-stream'",
-// 	"Require cycle",
-// ]);
-
 function Root() {
 	return (
 		<AccountContextProvider>
-			<App />
+			<CreatorContextProvider>
+				<App />
+			</CreatorContextProvider>
 		</AccountContextProvider>
 	);
 }

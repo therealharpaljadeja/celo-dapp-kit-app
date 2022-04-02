@@ -7,11 +7,11 @@ import { isUserRegistered, registerUser } from "../utils/Creators";
 
 const provider = "https://alfajores-forno.celo-testnet.org";
 export const web3 = new Web3(provider);
-const kit = newKitFromWeb3(web3);
 
 export const AccountContext = React.createContext(null);
 
 export default function AccountContextProvider({ children }) {
+	const kit = newKitFromWeb3(web3);
 	const [account, setAccount] = useState(null);
 	const [creator, setCreator] = useState(null);
 
@@ -52,6 +52,7 @@ export default function AccountContextProvider({ children }) {
 				setCreator,
 				setAccount,
 				handler,
+				kit,
 				registerUserWithKit,
 			}}>
 			{children}
