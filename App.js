@@ -6,13 +6,25 @@ import FeedScreen from "./screens/FeedScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import Icon from "react-native-vector-icons/AntDesign";
 import SignUpModal from "./components/SignUpModal";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ConnectWalletScreen from "./screens/ConnectWalletScreen";
 import { AccountContext } from "./context/AccountContext";
+import { Linking } from "react-native";
+import LinkingHandler from "./utils/handler";
+import { MARKETPLACE_CONTRACT_ADDRESS } from "@env";
 
 const BottomTabs = createBottomTabNavigator();
 
 export default function App() {
+	useEffect(() => {
+		console.log(MARKETPLACE_CONTRACT_ADDRESS);
+		Linking.addEventListener("url", LinkingHandler);
+
+		return () => {
+			Linking.removeAllListeners("url");
+		};
+	}, []);
+
 	const { account } = useContext(AccountContext);
 	return (
 		<>

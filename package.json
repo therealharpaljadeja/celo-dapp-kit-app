@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@celo/dappkit": "^1.5.2",
+    "@openzeppelin/contracts": "^4.5.0",
     "@react-navigation/bottom-tabs": "^6.2.0",
     "@react-navigation/material-top-tabs": "^6.1.1",
     "@react-navigation/native": "^6.0.8",
+    "dotenv": "^16.0.0",
     "expo": "~44.0.0",
     "expo-linking": "^3.0.0",
     "expo-status-bar": "~1.2.0",
@@ -21,6 +23,8 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-dotenv": "^3.3.1",
+    "react-native-pager-view": "5.4.9",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
     "react-native-tab-view": "^3.1.1",
@@ -29,11 +33,16 @@
     "react-native-web": "0.17.1",
     "stream-browserify": "^3.0.0",
     "twrnc": "^3.0.2",
-    "vm-browserify": "^1.1.2",
-    "react-native-pager-view": "5.4.9"
+    "vm-browserify": "^1.1.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.2",
+    "hardhat": "^2.9.2"
   },
   "private": true
 }

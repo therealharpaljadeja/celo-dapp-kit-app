@@ -39,8 +39,6 @@ export default function ConnectWalletScreen() {
 				console.log(result);
 			}
 		}
-
-		Linking.addEventListener("url", handler);
 	}
 
 	async function send() {
