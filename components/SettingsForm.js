@@ -8,7 +8,11 @@ import {
 	Image,
 } from "react-native";
 import { AccountContext } from "../context/AccountContext";
-import { useContext } from "react";
+import { useContext, useReducer } from "react";
+import { CreatorContext } from "../context/CreatorContext";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+
 const styles = StyleSheet.create({
 	textInput: tw`border-gray-200 border-2 rounded-md my-1 px-2`,
 	modalOverlay: tw`p-5 justify-center flex-1 bg-gray-500/50`,
@@ -17,28 +21,151 @@ const styles = StyleSheet.create({
 	image: tw`rounded-full w-25 h-25 self-center mb-10`,
 });
 
+const settingsReducer = (state, action) => {
+	switch (action.type) {
+		case "ACCOUNT":
+			return { ...state, account: action.payload };
+		case "NAME":
+			return { ...state, name: action.payload };
+		case "USERNAME":
+			return { ...state, username: action.payload };
+		case "BIO":
+			return { ...state, bio: action.payload };
+		case "NFT_COLLECTION_NAME":
+			return { ...state, nftCollectionName: action.payload };
+		case "NFT_COLLECTION_SYMBOL":
+			return { ...state, nftCollectionSymbol: action.payload };
+		case "PFP_URL":
+			return { ...state, profilePicUrl: action.payload };
+		case "CLEAR":
+			return initialState;
+		default:
+			return state;
+	}
+};
+
 export function SettingsForm() {
 	const { account } = useContext(AccountContext);
+	const { creator } = useContext(CreatorContext);
+
+	const initialState = {
+		account,
+		name: creator.name,
+		bio: creator.bio,
+		nftCollectionName: creator.nftCollectionName,
+		nftCollectionSymbol: creator.nftCollectionSymbol,
+		profilePicUrl:
+			creator.profilePicUrl === ""
+				? "https://bit.ly/dan-abramov"
+				: creator.profilePicUrl,
+		username: creator.username,
+	};
+
+	let openImagePickerAsync = async () => {
+		let permissionResult =
+			await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		if (permissionResult.granted === false) {
+			alert("Permission to access camera roll is required!");
+			return;
+		}
+
+		let pickerResult = await ImagePicker.launchImageLibraryAsync();
+		let fileData = await FileSystem.readAsStringAsync(pickerResult.uri, {
+			encoding: FileSystem.EncodingType.Base64,
+		});
+		let imageData = Buffer(fileData);
+
+		console.log(imageData);
+
+		// const metadata = await client.add({
+		// 	name: "pfp",
+		// 	description: "",
+		// 	image: fileObj,
+		// });
+		// let metadataSplit = metadata.url.split("/", 4);
+		// const url =
+		// 	"https://ipfs.io/ipfs/" +
+		// 	metadataSplit[metadataSplit.length - 2] +
+		// 	"/" +
+		// 	metadataSplit[metadataSplit.length - 1];
+
+		// let response = await axios.get(url);
+
+		// let image = response.data.image;
+		// let imageSplit = image.split("/", 4);
+		// const imageUrl =
+		// 	"https://ipfs.io/ipfs/" +
+		// 	imageSplit[imageSplit.length - 2] +
+		// 	"/" +
+		// 	imageSplit[imageSplit.length - 1];
+		// setProfilePicUrl(imageUrl);
+		// console.log(imageUrl);
+		// dispatch({ type: "PFP_URL", payload: imageUrl });
+	};
+
+	const [state, dispatch] = useReducer(settingsReducer, initialState);
 	return (
 		<View style={styles.modal}>
-			<Image
-				style={styles.image}
-				source={{ uri: "https://bit.ly/dan-abramov" }}
+			<TouchableOpacity onPress={openImagePickerAsync}>
+				<Image
+					style={styles.image}
+					source={{ uri: state.profilePicUrl }}
+				/>
+			</TouchableOpacity>
+			<TextInput
+				style={styles.textInput}
+				value={state.account}
+				editable={false}
 			/>
 			<TextInput
 				style={styles.textInput}
-				value={account}
-				editable={false}
+				value={state.username}
+				placeholder='username'
+				onChangeText={(newValue) =>
+					dispatch({ type: "USERNAME", payload: newValue })
+				}
 			/>
-			<TextInput style={styles.textInput} />
+			<TextInput
+				value={state.name}
+				onChangeText={(newValue) =>
+					dispatch({ type: "NAME", payload: newValue })
+				}
+				style={styles.textInput}
+				placeholder='name'
+			/>
 			<TextInput
 				multiline={true}
 				numberOfLines={4}
+				placeholder='bio'
 				style={styles.textInput}
+				value={state.bio}
+				onChangeText={(newValue) =>
+					dispatch({ type: "BIO", payload: newValue })
+				}
 			/>
-			<TextInput style={styles.textInput} />
-			<TextInput style={styles.textInput} />
-			<TextInput style={styles.textInput} />
+			<TextInput
+				placeholder='NFT Collection Name'
+				style={styles.textInput}
+				value={state.nftCollectionName}
+				onChangeText={(newValue) =>
+					dispatch({
+						type: "NFT_COLLECTION_NAME",
+						payload: newValue,
+					})
+				}
+			/>
+			<TextInput
+				style={styles.textInput}
+				value={state.nftCollectionSymbol}
+				onChangeText={(newValue) =>
+					dispatch({
+						type: "NFT_COLLECTION_SYMBOL",
+						payload: newValue,
+					})
+				}
+				placeholder='NFT Collection Symbol'
+			/>
 			<TouchableOpacity style={styles.button}>
 				<Text
 					style={{
