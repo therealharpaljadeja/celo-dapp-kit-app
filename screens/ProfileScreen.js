@@ -7,8 +7,11 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import tw from "twrnc";
+import { useContext } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ImageList from "../components/ImageList";
+import { CreatorContext } from "../context/CreatorContext";
+import MintNFTModal from "../components/MintNFTModal";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -21,8 +24,11 @@ const styles = StyleSheet.create({
 });
 
 export default function ProfileScreen({ navigation }) {
+	const { creator, setIsMintModalOpen } = useContext(CreatorContext);
+
 	return (
 		<View style={{ flex: 1 }}>
+			<MintNFTModal />
 			<View
 				style={{
 					justifyContent: "center",
@@ -46,10 +52,10 @@ export default function ProfileScreen({ navigation }) {
 					source={{ uri: "https://bit.ly/dan-abramov" }}
 				/>
 				<Text style={tw.style(styles.textStyle, "text-lg mt-2")}>
-					Mike
+					{creator.name}
 				</Text>
 				<Text style={tw.style(styles.textStyle, "mt-1")}>
-					Mike 💘 NFTs
+					{creator.bio}
 				</Text>
 				<View style={tw.style(styles.rowFlex, "mt-3")}>
 					<View style={tw.style(styles.verticalItems)}>
@@ -68,6 +74,7 @@ export default function ProfileScreen({ navigation }) {
 				<View
 					style={{ flexDirection: "row", justifyContent: "center" }}>
 					<TouchableOpacity
+						onPress={() => setIsMintModalOpen(true)}
 						style={tw.style(styles.touchableOpacity, "mt-3 mx-2")}>
 						<Text style={tw.style(styles.textStyle, "text-white")}>
 							Mint NFT
@@ -85,24 +92,9 @@ export default function ProfileScreen({ navigation }) {
 				<Tab.Navigator
 					style={tw`bg-red-500`}
 					screenOptions={{
-						// tabBarActiveTintColor: "#a855f7",
-						// tabBarContentContainerStyle: tw`bg-purple-200 p-1`,
 						tabBarActiveTintColor: "#fff",
 						tabBarInactiveTintColor: "#a855f7",
 						tabBarContentContainerStyle: tw`bg-transparent p-2`,
-						// tabBarItemStyle: tw`bg-purple-200 rounded-md`,
-						// tabBarStyle: tw`text-purple-500`,
-						// tabBarLabel: ({ focused, color }) => {
-						// 	return (
-						// 		<TouchableOpacity>
-						// 			<Text
-						// 				style={tw.style(
-						// 					focused && `bg-purple-500`,
-						// 					"text-white"
-						// 				)}></Text>
-						// 		</TouchableOpacity>
-						// 	);
-						// },
 						tabBarIndicatorContainerStyle: tw`bg-purple-200 `,
 						tabBarIndicatorStyle: tw`bg-purple-500 h-12 top-2 rounded-md relative`,
 					}}>
