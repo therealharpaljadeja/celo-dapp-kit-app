@@ -6,67 +6,95 @@ import FeedScreen from "./screens/FeedScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import Icon from "react-native-vector-icons/AntDesign";
 import SignUpModal from "./components/SignUpModal";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import ConnectWalletScreen from "./screens/ConnectWalletScreen";
 import { AccountContext } from "./context/AccountContext";
-import { Linking } from "react-native";
+import { ActivityIndicator } from "react-native";
+import * as Linking from "expo-linking";
 import LinkingHandler from "./utils/handler";
-import { MARKETPLACE_CONTRACT_ADDRESS } from "@env";
+import { SafeAreaView } from "react-native-safe-area-context";
+import tw from "twrnc";
 
 const BottomTabs = createBottomTabNavigator();
 
 export default function App() {
+	const { account, handler, checkIfUserRegistered } =
+		useContext(AccountContext);
+
+	const [checkingIfRegistered, setCheckingIfRegistered] = useState(null);
+	const [isUserRegistered, setIsUserRegistered] = useState(null);
 	useEffect(() => {
-		console.log(MARKETPLACE_CONTRACT_ADDRESS);
-		Linking.addEventListener("url", LinkingHandler);
+		Linking.addEventListener("url", handler);
 
 		return () => {
-			Linking.removeAllListeners("url");
+			Linking.removeEventListener("url", handler);
 		};
 	}, []);
 
-	const { account } = useContext(AccountContext);
+	useEffect(async () => {
+		if (account) {
+			console.log(account);
+			setCheckingIfRegistered(true);
+			let response = await checkIfUserRegistered();
+			setIsUserRegistered(response);
+			setCheckingIfRegistered(false);
+		}
+	}, [account]);
+
 	return (
 		<>
 			{!account ? (
 				<ConnectWalletScreen />
 			) : (
 				<>
-					{/* <SignUpModal /> */}
-					<NavigationContainer>
-						<BottomTabs.Navigator
-							screenOptions={({ route }) => ({
-								tabBarLabelPosition: "beside-icon",
-								tabBarIcon: ({ color, size }) => {
-									const Icons = {
-										Profile: "user",
-										Settings: "setting",
-										Feed: "earth",
-									};
-									return (
-										<Icon
-											color={color}
-											name={Icons[route.name]}
-											size={size}
-										/>
-									);
-								},
-								tabBarActiveTintColor: "#a855f7",
-							})}>
-							<BottomTabs.Screen
-								name='Feed'
-								component={FeedScreen}
+					{checkingIfRegistered ? (
+						<SafeAreaView style={tw`flex-1 items-center`}>
+							<ActivityIndicator
+								animating={true}
+								size='large'
+								color='#a855f7'
 							/>
-							<BottomTabs.Screen
-								name='Profile'
-								component={ProfileScreen}
-							/>
-							<BottomTabs.Screen
-								name='Settings'
-								component={SettingsScreen}
-							/>
-						</BottomTabs.Navigator>
-					</NavigationContainer>
+						</SafeAreaView>
+					) : (
+						<>
+							{!isUserRegistered && <SignUpModal />}
+							<NavigationContainer>
+								<BottomTabs.Navigator
+									initialRouteName='Profile'
+									screenOptions={({ route }) => ({
+										tabBarLabelPosition: "beside-icon",
+										tabBarIcon: ({ color, size }) => {
+											const Icons = {
+												Profile: "user",
+												Settings: "setting",
+												Feed: "earth",
+											};
+											return (
+												<Icon
+													color={color}
+													name={Icons[route.name]}
+													size={size}
+												/>
+											);
+										},
+										tabBarActiveTintColor: "#a855f7",
+									})}>
+									<BottomTabs.Screen
+										name='Feed'
+										component={FeedScreen}
+									/>
+									<BottomTabs.Screen
+										name='Profile'
+										component={ProfileScreen}
+									/>
+									<BottomTabs.Screen
+										name='Settings'
+										component={SettingsScreen}
+									/>
+								</BottomTabs.Navigator>
+							</NavigationContainer>
+						</>
+					)}
 				</>
 			)}
 		</>

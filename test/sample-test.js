@@ -1,3 +1,4 @@
+const { EtherscanProvider } = require("@ethersproject/providers");
 const { ethers } = require("hardhat");
 
 describe("NFT", function () {
@@ -98,9 +99,12 @@ describe("NFT", function () {
 	});
 
 	it("register user", async () => {
+		const [firstSigner, secondSigner] = await ethers.getSigners();
 		const Creators = await ethers.getContractFactory("Creators");
 		let creators = await Creators.deploy();
 		await creators.deployed();
+		let isRegistered = await creators.isUserRegistered(firstSigner.address);
+		console.log(isRegistered);
 		let result = await creators.registerUser(
 			"second",
 			"Second",
