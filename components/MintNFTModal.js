@@ -6,16 +6,13 @@ import {
 	TouchableOpacity,
 	Text,
 	TextInput,
+	Image,
 } from "react-native";
 import { CreatorContext } from "../context/CreatorContext";
 import tw from "twrnc";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import AntIcon from "react-native-vector-icons/AntDesign";
-import pinataSDK from "@pinata/sdk";
-const pinata = pinataSDK(
-	"29c93da6414a34825a4f",
-	"15b6192caef1b213244bc64c41d75fde39c5fe3c5ec057287cf1b2d6cbcc4dee"
-);
+import openImagePickerAsync from "../utils/imagePicker";
 
 const mintReducer = (state, action) => {
 	switch (action.type) {
@@ -52,6 +49,11 @@ export default function MintNFTModal() {
 
 	async function mintNFT() {}
 
+	async function uploadToIpfs() {
+		let image = await openImagePickerAsync();
+		dispatch({ type: "IMAGE_URL", payload: image });
+	}
+
 	return (
 		<Modal transparent={true} visible={isMintModalOpen}>
 			<View style={styles.modalOverlay}>
@@ -67,17 +69,24 @@ export default function MintNFTModal() {
 					<Text style={tw`text-5 self-center py-4 text-purple-500`}>
 						Mint Modal
 					</Text>
-					<TouchableOpacity>
-						<View style={tw`h-70 bg-purple-200 rounded-md p-2`}>
-							<View
-								style={tw`border-dashed items-center justify-center rounded-md border-purple-500 border-2 flex-1`}>
-								<FeatherIcon
-									name='image'
-									size={40}
-									color='#a855f7'
-								/>
+					<TouchableOpacity onPress={uploadToIpfs}>
+						{state.imageUrl === "" ? (
+							<View style={tw`h-70 bg-purple-200 rounded-md p-2`}>
+								<View
+									style={tw`border-dashed items-center justify-center rounded-md border-purple-500 border-2 flex-1`}>
+									<FeatherIcon
+										name='image'
+										size={40}
+										color='#a855f7'
+									/>
+								</View>
 							</View>
-						</View>
+						) : (
+							<Image
+								style={tw`h-70 rounded-md`}
+								source={{ uri: state.imageUrl }}
+							/>
+						)}
 					</TouchableOpacity>
 					<TextInput
 						style={styles.textInput}

@@ -10,14 +10,7 @@ import {
 import { AccountContext } from "../context/AccountContext";
 import { useContext, useReducer } from "react";
 import { CreatorContext } from "../context/CreatorContext";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-import pinataSDK from "@pinata/sdk";
-import axios from "axios";
-const pinata = pinataSDK(
-	"29c93da6414a34825a4f",
-	"15b6192caef1b213244bc64c41d75fde39c5fe3c5ec057287cf1b2d6cbcc4dee"
-);
+import openImagePickerAsync from "../utils/imagePicker";
 
 const styles = StyleSheet.create({
 	textInput: tw`border-gray-200 border-2 rounded-md my-1 px-2`,
@@ -67,38 +60,15 @@ export function SettingsForm() {
 		username: creator.username,
 	};
 
-	let openImagePickerAsync = async () => {
-		let permissionResult =
-			await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-		if (permissionResult.granted === false) {
-			alert("Permission to access camera roll is required!");
-			return;
-		}
-
-		let pickerResult = await ImagePicker.launchImageLibraryAsync();
-		console.log(pickerResult);
-
-		let fileData = await FileSystem.readAsStringAsync(pickerResult.uri, {
-			encoding: FileSystem.EncodingType.Base64,
-		});
-
-		let result = await pinata.pinJSONToIPFS({
-			name: "pfp",
-			image: `data:image/png;base64,${fileData}`,
-		});
-
-		let url = `https://ipfs.io/ipfs/${result.IpfsHash}`;
-		let response = await axios.get(url);
-		console.log("response", response);
-		let image = response.data.image;
+	async function uploadToIpfs() {
+		let image = await openImagePickerAsync();
 		dispatch({ type: "PFP_URL", payload: image });
-	};
+	}
 
 	const [state, dispatch] = useReducer(settingsReducer, initialState);
 	return (
 		<View style={styles.modal}>
-			<TouchableOpacity onPress={openImagePickerAsync}>
+			<TouchableOpacity onPress={uploadToIpfs}>
 				<Image
 					style={styles.image}
 					source={{ uri: state.profilePicUrl }}
