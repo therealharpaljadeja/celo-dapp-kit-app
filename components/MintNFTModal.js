@@ -11,6 +11,11 @@ import { CreatorContext } from "../context/CreatorContext";
 import tw from "twrnc";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import AntIcon from "react-native-vector-icons/AntDesign";
+import pinataSDK from "@pinata/sdk";
+const pinata = pinataSDK(
+	"29c93da6414a34825a4f",
+	"15b6192caef1b213244bc64c41d75fde39c5fe3c5ec057287cf1b2d6cbcc4dee"
+);
 
 const mintReducer = (state, action) => {
 	switch (action.type) {

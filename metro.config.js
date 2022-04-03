@@ -1,8 +1,10 @@
 const crypto = require.resolve("crypto-browserify");
 const url = require.resolve("url/");
+const nodelibs = require("node-libs-react-native");
 module.exports = {
 	resolver: {
 		extraNodeModules: {
+			...nodelibs,
 			crypto,
 			url,
 			fs: require.resolve("expo-file-system"),
@@ -13,5 +15,6 @@ module.exports = {
 			path: require.resolve("path-browserify"),
 			stream: require.resolve("readable-stream"),
 		},
+		sourceExts: ["cjs", "js", "jsx", "ts", "tsx"],
 	},
 };

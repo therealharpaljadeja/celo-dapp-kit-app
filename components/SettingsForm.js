@@ -12,6 +12,12 @@ import { useContext, useReducer } from "react";
 import { CreatorContext } from "../context/CreatorContext";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import pinataSDK from "@pinata/sdk";
+import axios from "axios";
+const pinata = pinataSDK(
+	"29c93da6414a34825a4f",
+	"15b6192caef1b213244bc64c41d75fde39c5fe3c5ec057287cf1b2d6cbcc4dee"
+);
 
 const styles = StyleSheet.create({
 	textInput: tw`border-gray-200 border-2 rounded-md my-1 px-2`,
@@ -71,37 +77,22 @@ export function SettingsForm() {
 		}
 
 		let pickerResult = await ImagePicker.launchImageLibraryAsync();
+		console.log(pickerResult);
+
 		let fileData = await FileSystem.readAsStringAsync(pickerResult.uri, {
 			encoding: FileSystem.EncodingType.Base64,
 		});
-		let imageData = Buffer(fileData);
 
-		console.log(imageData);
+		let result = await pinata.pinJSONToIPFS({
+			name: "pfp",
+			image: `data:image/png;base64,${fileData}`,
+		});
 
-		// const metadata = await client.add({
-		// 	name: "pfp",
-		// 	description: "",
-		// 	image: fileObj,
-		// });
-		// let metadataSplit = metadata.url.split("/", 4);
-		// const url =
-		// 	"https://ipfs.io/ipfs/" +
-		// 	metadataSplit[metadataSplit.length - 2] +
-		// 	"/" +
-		// 	metadataSplit[metadataSplit.length - 1];
-
-		// let response = await axios.get(url);
-
-		// let image = response.data.image;
-		// let imageSplit = image.split("/", 4);
-		// const imageUrl =
-		// 	"https://ipfs.io/ipfs/" +
-		// 	imageSplit[imageSplit.length - 2] +
-		// 	"/" +
-		// 	imageSplit[imageSplit.length - 1];
-		// setProfilePicUrl(imageUrl);
-		// console.log(imageUrl);
-		// dispatch({ type: "PFP_URL", payload: imageUrl });
+		let url = `https://ipfs.io/ipfs/${result.IpfsHash}`;
+		let response = await axios.get(url);
+		console.log("response", response);
+		let image = response.data.image;
+		dispatch({ type: "PFP_URL", payload: image });
 	};
 
 	const [state, dispatch] = useReducer(settingsReducer, initialState);
