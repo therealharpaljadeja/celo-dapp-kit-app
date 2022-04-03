@@ -3,6 +3,8 @@ import { getNFTCollectionAddress } from "./Creator";
 import axios from "axios";
 import Creator from "../abi/Creator.json";
 import { web3 } from "../context/AccountContext";
+import { requestTxSig, FeeCurrency } from "@celo/dappkit";
+import * as Linking from "expo-linking";
 
 export const balanceOf = async (kit, creatorAddress) => {
 	let collectionAddress = getNFTCollectionAddress(creatorAddress);
@@ -11,11 +13,38 @@ export const balanceOf = async (kit, creatorAddress) => {
 	return result;
 };
 
-export const mintNFT = async (creatorAddress, tokenURI, royaltyPercentage) => {
+export const mintNFT = async (
+	kit,
+	creatorAddress,
+	tokenURI,
+	royaltyPercentage
+) => {
+	console.log("minting nft", kit.defaultAccount);
 	let collectionAddress = await getNFTCollectionAddress(creatorAddress);
 	let nftContract = new web3.eth.Contract(NFT.abi, collectionAddress);
-	let tx = await nftContract.methods.createToken(tokenURI, royaltyPercentage);
-	return tx;
+	let txObject = await nftContract.methods
+		.createToken(tokenURI, royaltyPercentage)
+		.call();
+
+	requestTxSig(
+		kit,
+		[
+			{
+				from: kit.defaultAccount,
+				to: collectionAddress,
+				tx: txObject,
+				feeCurrency: FeeCurrency.cUSD,
+			},
+		],
+		{
+			requestId: "mintNFT",
+			dappName: "DAOMe",
+			callback: Linking.createURL("/mintNFT"),
+		}
+	);
+
+	// console.log(txObject);
+	// return txObject;
 };
 
 export const tokenOwnedByUser = async (creatorAddress) => {

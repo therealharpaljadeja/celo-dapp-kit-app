@@ -7,12 +7,19 @@ import {
 	Text,
 	TextInput,
 	Image,
+	ActivityIndicator,
 } from "react-native";
 import { CreatorContext } from "../context/CreatorContext";
 import tw from "twrnc";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import AntIcon from "react-native-vector-icons/AntDesign";
 import openImagePickerAsync from "../utils/imagePicker";
+import pinataSDK from "@pinata/sdk";
+
+const pinata = pinataSDK(
+	"29c93da6414a34825a4f",
+	"15b6192caef1b213244bc64c41d75fde39c5fe3c5ec057287cf1b2d6cbcc4dee"
+);
 
 const mintReducer = (state, action) => {
 	switch (action.type) {
@@ -45,9 +52,25 @@ export default function MintNFTModal() {
 	};
 	const [state, dispatch] = useReducer(mintReducer, initialState);
 	const [mintingNFT, setMintingNFT] = useState(null);
-	const { isMintModalOpen, setIsMintModalOpen } = useContext(CreatorContext);
 
-	async function mintNFT() {}
+	const { isMintModalOpen, setIsMintModalOpen, mintNFTFromContext } =
+		useContext(CreatorContext);
+
+	async function mintNFT() {
+		setMintingNFT(true);
+		let { title, description, imageUrl } = state;
+		let nftMetadata = {
+			title,
+			description,
+			image: imageUrl,
+		};
+
+		let result = await pinata.pinJSONToIPFS(nftMetadata);
+		let url = `https://ipfs.io/ipfs/${result.IpfsHash}`;
+		await mintNFTFromContext(url, state.royaltyPercentage);
+		setIsMintModalOpen(false);
+		setMintingNFT(false);
+	}
 
 	async function uploadToIpfs() {
 		let image = await openImagePickerAsync();

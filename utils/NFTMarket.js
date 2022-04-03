@@ -4,6 +4,8 @@ import NFT from "../abi/NFT.json";
 import Creators from "../abi/Creators.json";
 import Creator from "../abi/Creator.json";
 import axios from "axios";
+import { requestTxSig, FeeCurrency } from "@celo/dappkit";
+import * as Linking from "expo-linking";
 
 export const fetchItemsCreated = async (kit) => {
 	const currentAddress = kit.defaultAccount;

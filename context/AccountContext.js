@@ -24,12 +24,15 @@ export default function AccountContextProvider({ children }) {
 				setAccount(queryParams.account);
 				break;
 			case "registerUser":
-				let tx = queryParams.rawTxs;
-				let receipt = await toTxResult(
-					kit.web3.eth.sendSignedTransaction(tx)
+				let registerTx = queryParams.rawTxs;
+				let registerReceipt = await toTxResult(
+					kit.web3.eth.sendSignedTransaction(registerTx)
 				).waitReceipt();
-				console.log(receipt);
+				console.log(registerReceipt);
 				break;
+			case "mintNFT":
+				let mintTx = queryParams.rawTxs;
+				console.log(mintTx);
 			default:
 				console.log("unknown url!");
 		}

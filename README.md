@@ -1,15 +1,14 @@
-# Basic Sample Hardhat Project
+# DAOMe
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+### DAOMe is a No-code Creator Economy platform.
 
-Try running some of the following tasks:
+The problem DAOMe solves
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+-   Marketplaces like Opensea are not Completely trustless.
+    NFTs created using Opensea exists on Opensea StoreFront Contract which is closed source.
+-   Setting up Snapshot, Discourse and DAO infrastructure is cumbersome.
+-   DAOMe solves this problem all the NFTs created on the DAOMe Platform all 100% owned by the creator.
+-   DAOMe solves all this problems by providing a No-Code solution and making Web3 more accessible to the masses.
+
+![screenshot-1](./assets/1.jpeg)
+![screenshot-2](./assets/2.png)
