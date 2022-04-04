@@ -31,6 +31,7 @@ export const getCreatorAddressByUsername = async (wallet, username) => {
 };
 
 export const registerUser = async (kit, creatorObj) => {
+	console.log(CREATORS_CONTRACT_ADDRESS);
 	const creatorsContract = new web3.eth.Contract(
 		Creators.abi,
 		CREATORS_CONTRACT_ADDRESS
