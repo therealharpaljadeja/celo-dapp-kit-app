@@ -40,7 +40,9 @@ export default function App() {
 			setCheckingIfRegistered(true);
 			let response = await checkIfUserRegistered();
 			setIsUserRegistered(response);
-			await getCreatorObjFromAddressWithKit();
+			if (response) {
+				await getCreatorObjFromAddressWithKit();
+			}
 			setCheckingIfRegistered(false);
 		}
 	}, [account]);
