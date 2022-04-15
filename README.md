@@ -1,6 +1,8 @@
 # DAOMe
 
 ### DAOMe is a No-code Creator Economy platform.
+[Demo Video](https://www.youtube.com/watch?v=VZGs_hDdqnY)
+
 
 The problem DAOMe solves
 
@@ -11,6 +13,5 @@ The problem DAOMe solves
 -   DAOMe solves all this problems by providing a No-Code solution and making Web3 more accessible to the masses.
 
 
-![Demo Video](https://www.youtube.com/watch?v=VZGs_hDdqnY)
 ![screenshot-1](./assets/1.jpeg)
 ![screenshot-2](./assets/2.png)
